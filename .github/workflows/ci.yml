@@ -14,17 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Python dependency management tool
-        run: curl -sSL https://install.python-poetry.org | python3 - --preview
-
-      - name: Remind of the version installed
-        run: poetry --version
-
-      - name: Set up Python environment
-        run: poetry install
-
-      - name: Lint Python code
-        run: poetry run ./lint.sh
-
-      - name: Test
-        run: poetry run ./test.sh
+      - name: Lint and Test code
+        run:
+          - curl -sSL https://install.python-poetry.org | python3 - --preview
+          - poetry --version
+          - poetry install
+          - poetry run ./lint.sh
+          - poetry run ./test.sh
