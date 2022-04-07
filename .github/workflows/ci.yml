@@ -15,9 +15,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Lint and Test code
-        run:
-          - curl -sSL https://install.python-poetry.org | python3 - --preview
-          - poetry --version
-          - poetry install
-          - poetry run ./lint.sh
-          - poetry run ./test.sh
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 - --preview
+          poetry --version
+          poetry install
+          poetry run ./lint.sh
+          poetry run ./test.sh
