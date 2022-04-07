@@ -1,0 +1,30 @@
+name: gaia
+
+on:  # yamllint disable-line rule:truthy
+  - push
+
+jobs:
+
+  test:
+    container:
+      image: python:3.9
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Python dependency management tool
+        run: curl -sSL https://install.python-poetry.org | python3 - --preview
+
+      - name: Remind of the version installed
+        run: /root/.local/bin/poetry --version
+
+      - name: Set up Python environment
+        run: /root/.local/bin/poetry install
+
+      - name: Lint Python code
+        run: /root/.local/bin/poetry run ./lint.sh
+
+      - name: Test
+        run: /root/.local/bin/poetry run ./test.sh
