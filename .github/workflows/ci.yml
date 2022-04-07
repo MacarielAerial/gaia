@@ -17,7 +17,8 @@ jobs:
       - name: Lint and Test code
         run: |
           curl -sSL https://install.python-poetry.org | python3 - --preview
-          /root/.local/bin/poetry --version
-          /root/.local/bin/poetry install
-          /root/.local/bin/poetry run ./lint.sh
-          /root/.local/bin/poetry run ./test.sh
+          export PATH="/github/home/.local/bin:$PATH"
+          poetry --version
+          poetry install
+          poetry run ./lint.sh
+          poetry run ./test.sh
