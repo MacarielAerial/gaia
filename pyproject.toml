@@ -27,6 +27,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 88
+extend-exclude = [".venv"]
 
 [tool.isort]
 profile = "black"
