@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash -e
 
 echo "Linting YAML..."
 yamllint . --strict
