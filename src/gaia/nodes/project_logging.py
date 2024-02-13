@@ -1,6 +1,6 @@
 import logging
 import logging.config
-from importlib.resources import files
+from importlib.resources import files  # nosemgrep
 
 import gaia
 
