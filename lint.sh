@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 echo "Shell checking..."
-shellcheck ./*.sh
+shellcheck ./scripts/*.sh
 
 echo "Linting YAML..."
 yamllint . --strict

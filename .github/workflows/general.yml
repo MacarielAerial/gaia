@@ -6,10 +6,8 @@ on:  # yamllint disable-line rule:truthy
       - '*'
 
 jobs:
-
   test:
-    container:
-      image: python:3.10
+    name: Test python application logic
     runs-on: ubuntu-latest
 
     steps:
