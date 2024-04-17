@@ -9,6 +9,8 @@ jobs:
   test:
     name: Test python application logic
     runs-on: ubuntu-latest
+    container:
+      image: python:3.11-slim-bookworm
 
     steps:
       - name: Checkout
