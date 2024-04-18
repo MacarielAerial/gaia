@@ -7,15 +7,15 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
   test:
-    name: Test python application logic
     runs-on: ubuntu-latest
-    container:
-      image: python:3.11-slim-bookworm
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-  
+ 
+      - name: Check
+        run: echo docker --version
+
       - name: Build and test with devcontainer
         uses: devcontainers/ci@v0.3
         with:
