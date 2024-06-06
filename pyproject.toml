@@ -14,22 +14,21 @@ include = [
 
 [tool.poetry.dependencies]
 python = "~3.11"
-orjson = "^3.10.1"
-dacite = "^1.8.1"
-pydantic = "^2.7.0"
+pydantic = "^2.7.3"
+pandas = "^2.2.2"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
-pytest = "^8.1.1"
-mypy = "^1.9.0"
+pytest = "^8.2.2"
+mypy = "^1.10.0"
 flake8 = "^7.0.0"
-coverage = {extras = ["toml"], version = "^7.4.4"}
-black = "^24.4.0"
+coverage = {extras = ["toml"], version = "^7.5.3"}
+black = "^24.4.2"
 yamllint = "^1.35.1"
-semgrep = "^1.69.0"
+semgrep = "^1.75.0"
 ipykernel = "^6.29.4"
 nbformat = "^5.10.4"
-ruff = "^0.3.7"
+ruff = "^0.4.8"
 shellcheck-py = "^0.10.0.1"
 python-dotenv = "^1.0.1"
 

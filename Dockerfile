@@ -9,9 +9,15 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=1
 
 # Install graphviz, git and git lfs
 RUN apt-get update && apt-get install -y \
+    # graphviz \
+    # graphviz-dev \
+    # texlive-xetex \
+    # texlive-fonts-recommended \
+    # texlive-plain-generic \
+    # pandoc \
+    # libgl1-mesa-glx \
+    # awscli \
     curl \
-    graphviz \
-    graphviz-dev \
     git \
     git-lfs
 
