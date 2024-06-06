@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   gaia:
     # Prevent the container from exiting after initialisation
