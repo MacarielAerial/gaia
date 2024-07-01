@@ -21,6 +21,17 @@ RUN apt-get update && apt-get install -y \
     git \
     git-lfs
 
+# Install Node.JS
+# RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \
+#     apt-get install -y nodejs \
+#     build-essential && \
+#     node --version && \
+#     npm --version
+
+# Install playwright system dependencies
+# RUN npm -g install playwright@1.44.0
+# RUN playwright install --with-deps chromium
+
 # Install poetry
 RUN mkdir -p /home/poetry && \
     curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
