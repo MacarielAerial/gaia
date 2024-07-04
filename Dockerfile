@@ -4,8 +4,9 @@
 FROM python:3.11-slim-bookworm AS dev
 
 # Set environemntal variables
-ENV PATH = "${PATH}:/home/poetry/bin"
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1
+ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_HOME=/home/poetry \
+    PYTHONUNBUFFERED=1
 
 # Install graphviz, git and git lfs
 RUN apt-get update && apt-get install -y \
@@ -34,7 +35,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install poetry
 RUN mkdir -p /home/poetry && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    curl -sSL https://install.python-poetry.org | python3 - && \ 
     poetry self add poetry-plugin-up
 
 # Make available system dependency installation scripts
@@ -51,7 +52,7 @@ FROM python:3.11-slim-bookworm AS bake
 
 # Install poetry
 RUN mkdir -p /home/poetry && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
     poetry self add poetry-plugin-up
 
 # Make working directory
