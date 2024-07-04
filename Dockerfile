@@ -4,8 +4,12 @@
 FROM python:3.11-slim-bookworm AS dev
 
 # Set environemntal variables
-ENV PATH = "${PATH}:/home/poetry/bin"
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1
+ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_HOME=/home/poetry \
+    PYTHONUNBUFFERED=1
+
+# Add poetry executable to PATH
+ENV PATH="$POETRY_HOME/bin:$PATH"
 
 # Install graphviz, git and git lfs
 RUN apt-get update && apt-get install -y \
@@ -34,8 +38,11 @@ RUN apt-get update && apt-get install -y \
 
 # Install poetry
 RUN mkdir -p /home/poetry && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
     poetry self add poetry-plugin-up
+
+# Verify Poetry installation
+RUN poetry --version
 
 # Make available system dependency installation scripts
 # COPY scripts/* /scripts/
@@ -49,10 +56,25 @@ RUN mkdir -p /home/poetry && \
 
 FROM python:3.11-slim-bookworm AS bake
 
+# Set environemntal variables
+ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_HOME=/home/poetry \
+    PYTHONUNBUFFERED=1
+
+# Add poetry executable to PATH
+ENV PATH="$POETRY_HOME/bin:$PATH"
+
+# Install curl
+RUN apt-get update && apt-get install -y \
+    curl
+
 # Install poetry
 RUN mkdir -p /home/poetry && \
-    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
     poetry self add poetry-plugin-up
+
+# Verify Poetry installation
+RUN poetry --version
 
 # Make working directory
 RUN mkdir -p /app
@@ -64,7 +86,7 @@ COPY . /app
 WORKDIR /app
 
 # Install python dependencies in container
-RUN poetry install --without dev,vis
+RUN poetry install --without dev
 
 #
 # Multi Stage: Runtime Image
@@ -83,5 +105,5 @@ WORKDIR /app
 # Set executables in PATH
 ENV PATH="/app/.venv/bin:$PATH"
 
-# TODO: Add a command to start a FastAPI service
+# TODO: Add a command to start the service
 # ENTRYPOINT
