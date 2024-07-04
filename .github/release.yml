@@ -1,10 +1,6 @@
 name: ci_release
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    tags:
-      - '*'
-
   workflow_run:
     workflows: ['ci_general']
     types:
