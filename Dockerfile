@@ -37,11 +37,22 @@ RUN mkdir -p /home/poetry && \
     curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
     poetry self add poetry-plugin-up
 
+# Make available system dependency installation scripts
+# COPY scripts/* /scripts/
+
+# Install OpenTofu
+# RUN /scripts/install_opentofu.sh
+
 #
 # Multi Stage: Bake Image
 #
 
-FROM dev AS bake
+FROM python:3.11-slim-bookworm AS bake
+
+# Install poetry
+RUN mkdir -p /home/poetry && \
+    curl -sSL https://install.python-poetry.org | POETRY_HOME=/home/poetry python3 - && \
+    poetry self add poetry-plugin-up
 
 # Make working directory
 RUN mkdir -p /app
