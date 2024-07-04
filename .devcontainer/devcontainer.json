@@ -51,7 +51,8 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3.10",
+				
+				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3",
 				"terminal.integrated.shell.linux": "/bin/bash",
 				"remote.ssh.enableAgentForwarding": true
 			},
