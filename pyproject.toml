@@ -14,7 +14,7 @@ include = [
 
 [tool.poetry.dependencies]
 python = "~3.11"
-pydantic = "^2.7.4"
+pydantic = "^2.8.2"
 pandas = "^2.2.2"
 
 [tool.poetry.group.dev.dependencies]
@@ -22,13 +22,13 @@ isort = "^5.13.2"
 pytest = "^8.2.2"
 mypy = "^1.10.1"
 flake8 = "^7.1.0"
-coverage = {extras = ["toml"], version = "^7.5.4"}
+coverage = {extras = ["toml"], version = "^7.6.0"}
 black = "^24.4.2"
 yamllint = "^1.35.1"
-semgrep = "^1.78.0"
-ipykernel = "^6.29.4"
+semgrep = "^1.79.0"
+ipykernel = "^6.29.5"
 nbformat = "^5.10.4"
-ruff = "^0.4.8"
+ruff = "^0.5.2"
 shellcheck-py = "^0.10.0.1"
 python-dotenv = "^1.0.1"
 

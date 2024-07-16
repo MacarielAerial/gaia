@@ -97,6 +97,7 @@ RUN poetry install --without dev
 FROM python:3.11-slim-bookworm AS runtime
 
 # Copy over baked environment
+# Explicitly copy the otherwise ignore .venv folder
 COPY --from=bake /app /app
 COPY --from=bake /app/.venv /app/.venv
 
