@@ -1,7 +1,7 @@
 name: gaia-dev
 
 services:
-  gaia-dev:
+  gaia:
     # Prevent the container from exiting after initialisation
     command: /bin/sh -c "while sleep 1000; do :; done"
 

@@ -11,7 +11,7 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
 # Add poetry executable to PATH
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
-# Install graphviz, git and git lfs
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     # graphviz \
     # graphviz-dev \
@@ -20,10 +20,7 @@ RUN apt-get update && apt-get install -y \
     # texlive-plain-generic \
     # pandoc \
     # libgl1-mesa-glx \
-    # awscli \
-    curl \
-    git \
-    git-lfs
+    curl
 
 # Install Node.JS
 # RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && \

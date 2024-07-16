@@ -2,7 +2,7 @@ name: gaia-live
 
 services:
   # Replace placeholder service name
-  gaia-live:
+  gaia:
     build:
       context: .
       # docker-compose file is only used in dev
