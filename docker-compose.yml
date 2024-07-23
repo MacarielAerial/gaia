@@ -5,8 +5,8 @@ services:
   gaia:
     build:
       context: .
-      # docker-compose file is only used in dev
-      target: dev
+      # This docker compose file is used in production
+      target: live
       dockerfile: Dockerfile
     # Replace placeholder service name
     image: gaia-live

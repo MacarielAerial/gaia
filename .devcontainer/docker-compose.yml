@@ -2,6 +2,11 @@ name: gaia-dev
 
 services:
   gaia:
+    build:
+      context: .
+      # Overwrite the main file to use dev stage
+      target: dev
+      dockerfile: Dockerfile
     # Prevent the container from exiting after initialisation
     command: /bin/sh -c "while sleep 1000; do :; done"
 
