@@ -14,4 +14,4 @@ services:
 
     volumes:
       # Replace placeholder service name
-      - .:/workspaces/gaia:cached
+      - .:/home/vscode/workspaces/gaia:cached
