@@ -1,19 +1,23 @@
 {
-	"name": "${localWorkspaceFolderBasename}",
+	"name": "${containerWorkspaceFolderBasename}",
 	"dockerComposeFile": [
 		"../docker-compose.yml",
 		"docker-compose.yml"
 	],
-    "service": "${localWorkspaceFolderBasename}",
+    "service": "${containerWorkspaceFolderBasename}",
+	"remoteEnv": {
+		"CI": "${localEnv:CI}"
+	},
 	"features":  {
 		"ghcr.io/devcontainers/features/sshd:1": {}
 	},
-	"workspaceFolder": "/home/vscode/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/home/vscode/workspaces/gaia",
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/workspaces/${localWorkspaceFolderBasename}/.venv/bin/python3",
-				"terminal.integrated.shell.linux": "/bin/bash",
+				"python.defaultInterpreterPath": "/workspaces/${containerWorkspaceFolderBasename}/.venv/bin/python3",
+				"terminal.integrated.defaultProfile.linux": "bash",
+				"terminal.integrated.profiles.linux": {"bash": {"path": "bash"}},
 				"remote.ssh.enableAgentForwarding": true
 			},
 			"extensions": [
