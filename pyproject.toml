@@ -13,6 +13,7 @@ authors = [
 # repository = ""
 
 [tool.poetry]
+version = "1.0.0"
 packages = [
     { include = "gaia", from = "src", format = "sdist"}
 ]
