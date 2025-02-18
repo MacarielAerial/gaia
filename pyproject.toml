@@ -1,15 +1,20 @@
 [project]
 name = "gaia"
-version = "0.0.0"
+dynamic = [ "version", "dependencies" ]
 description = "Template repository for a python project"
+license = { text = "Proprietary" }
+readme = "README.md"
+requires-python = ">=3.12, <3.13"
 authors = [
     { name = "Yifei Yu", email = "yifeiyu.eos@gmail.com" }
 ]
-readme = "README.md"
+
+[project.urls]
+# repository = ""
 
 [tool.poetry]
 packages = [
-    { include = "gaia", from = "src" }
+    { include = "gaia", from = "src", format = "sdist"}
 ]
 include = [
     { path = "src/gaia/conf_default", format = "sdist" },
@@ -17,7 +22,6 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "~3.11"
 pydantic = "^2.10.6"
 pandas = "^2.2.3"
 

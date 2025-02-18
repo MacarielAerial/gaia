@@ -69,7 +69,7 @@ RUN poetry --version
 # Multi Stage: Bake Image
 #
 
-FROM python:3.11-slim-bookworm AS bake
+FROM python:3.12-slim-bookworm AS bake
 
 # Set environemntal variables
 ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -111,7 +111,7 @@ RUN poetry install --without dev
 
 # Local python is preferred but this image
 # has complete system dependencies
-FROM python:3.11-slim-bookworm AS runtime
+FROM python:3.12-slim-bookworm AS runtime
 
 # Copy over baked environment
 # Explicitly copy the otherwise ignore .venv folder
