@@ -59,12 +59,6 @@ RUN mkdir -p ${HOME}/poetry && \
 # Verify Poetry installation
 RUN poetry --version
 
-# Make available system dependency installation scripts
-# COPY scripts/* /scripts/
-
-# Install OpenTofu
-# RUN /scripts/install_opentofu.sh
-
 #
 # Multi Stage: Bake Image
 #
