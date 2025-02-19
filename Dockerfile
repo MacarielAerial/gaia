@@ -1,7 +1,7 @@
 #
 # Multi Stage: Dev Image
 #
-FROM python:3.11-slim-bookworm AS dev
+FROM python:3.12-slim-bookworm AS dev
 
 # Arguments associated with the non-root user
 ARG USERNAME=vscode
