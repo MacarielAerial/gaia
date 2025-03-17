@@ -19,10 +19,11 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "/workspaces/${containerWorkspaceFolderBasename}/.venv/bin/python",
+				"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
 				"terminal.integrated.defaultProfile.linux": "bash",
 				"terminal.integrated.profiles.linux": {"bash": {"path": "bash"}},
-				"remote.ssh.enableAgentForwarding": true
+				"remote.ssh.enableAgentForwarding": true,
+				"python.analysis.autoImportCompletions": true
 			},
 			"extensions": [
 				"vscodevim.vim",
