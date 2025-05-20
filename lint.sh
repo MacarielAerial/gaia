@@ -41,4 +41,4 @@ mypy src
 mypy tests
 
 echo "Running static analysis on code..."
-semgrep scan --config=auto src
+semgrep scan --config=p/ci src

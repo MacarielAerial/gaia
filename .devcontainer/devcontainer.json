@@ -34,7 +34,7 @@
 				"tamasfe.even-better-toml",
 				"davidanson.vscode-markdownlint",
 				"fnando.linter",
-				"ms-azuretools.vscode-docker",
+				"ms-azuretools.vscode-containers",
 				"github.vscode-github-actions"
 			]
 		}

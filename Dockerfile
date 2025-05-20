@@ -136,4 +136,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:80/health-check || exit 1
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT ["fastapi", "run", "src/thalia/main.py", "--port", "80"]
+ENTRYPOINT ["fastapi", "run", "src/gaia/main.py", "--port", "80"]
