@@ -23,24 +23,24 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-pydantic = "^2.11.4"
-pandas = "^2.2.3"
-fastapi = {extras = ["standard"], version = "^0.115.12"}
+pydantic = "^2.11.7"
+pandas = "^2.3.1"
+fastapi = "^0.116.1"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^6.0.1"
-pytest = "^8.3.5"
-mypy = "^1.15.0"
-flake8 = "^7.2.0"
-coverage = {extras = ["toml"], version = "^7.8.0"}
+pytest = "^8.4.1"
+mypy = "^1.17.1"
+flake8 = "^7.3.0"
+coverage = {extras = ["toml"], version = "^7.10.4"}
 black = "^25.1.0"
 yamllint = "^1.37.1"
-semgrep = "^1.122.0"
-ipykernel = "^6.29.5"
+semgrep = "^1.132.1"
+ipykernel = "^6.30.1"
 nbformat = "^5.10.4"
-ruff = "^0.11.10"
-shellcheck-py = "^0.10.0.1"
-python-dotenv = "^1.1.0"
+ruff = "^0.12.9"
+shellcheck-py = "^0.11.0.1"
+python-dotenv = "^1.1.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

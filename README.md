@@ -1,9 +1,9 @@
 # Gaia
 
-# Summary
+## Summary
 Gaia is a template repository for python applications
 
-# Note
+## Note
 
 * In order to enable SSH forwarding into the dev container, the host system's .bashrc has to be configured accordingly:
 

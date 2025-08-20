@@ -93,10 +93,10 @@ COPY src ${HOME}/app/src
 RUN poetry install --without dev
 
 #
-# Multi Stage: Runtime Image
+# Multi Stage: Live Image
 #
 
-FROM python:3.12-slim-bookworm AS runtime
+FROM python:3.12-slim-bookworm AS live
 
 # Reference build arguments
 ARG USERNAME
