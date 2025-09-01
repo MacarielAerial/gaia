@@ -6,7 +6,7 @@ ARG USER_GID=$USER_UID
 #
 # Multi Stage: Dev Image
 #
-FROM python:3.12-slim-bookworm AS dev
+FROM python:3.13-slim-bookworm AS dev
 
 # Arguments associated with the non-root user
 ARG USERNAME
@@ -50,7 +50,7 @@ RUN poetry --version
 # Multi Stage: Bake Image
 #
 
-FROM python:3.12-slim-bookworm AS bake
+FROM python:3.13-slim-bookworm AS bake
 
 # Arguments associated with the non-root user
 ARG USERNAME
@@ -104,7 +104,7 @@ RUN poetry install --without dev
 # Multi Stage: Live Image
 #
 
-FROM python:3.12-slim-bookworm AS live
+FROM python:3.13-slim-bookworm AS live
 
 # Reference build arguments
 ARG USERNAME
