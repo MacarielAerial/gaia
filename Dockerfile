@@ -39,7 +39,7 @@ USER ${USERNAME}
 ENV HOME=/home/${USERNAME}
 
 # Install poetry
-RUN mkdir -p ${HOME}/poetry && \
+RUN mkdir -p ${POETRY_HOME} && \
     curl -sSL https://install.python-poetry.org | python3 - && \
     poetry self add poetry-plugin-up
 
@@ -52,9 +52,14 @@ RUN poetry --version
 
 FROM python:3.12-slim-bookworm AS bake
 
+# Arguments associated with the non-root user
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+
 # Set environemntal variables
 ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_HOME=/home/poetry \
+    POETRY_HOME=/home/${USERNAME}/poetry \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive
 
@@ -76,7 +81,7 @@ USER ${USERNAME}
 ENV HOME=/home/${USERNAME}
 
 # Install poetry
-RUN mkdir -p ${HOME}/poetry && \
+RUN mkdir -p ${POETRY_HOME} && \
     curl -sSL https://install.python-poetry.org | python -
 
 # Verify Poetry installation
@@ -88,6 +93,9 @@ RUN mkdir -p ${HOME}/app
 # Copy source code and python dependency specification
 COPY pyproject.toml poetry.lock README.md ${HOME}/app/
 COPY src ${HOME}/app/src
+
+# Set working directory
+WORKDIR ${HOME}/app
 
 # Install python dependencies in container
 RUN poetry install --without dev
@@ -136,4 +144,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:80/health-check || exit 1
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT ["fastapi", "run", "src/gaia/main.py", "--port", "80"]
+ENTRYPOINT ["uvicorn", "gaia.main:app", "--host", "0.0.0.0", "--port", "80"]

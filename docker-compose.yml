@@ -10,4 +10,4 @@ services:
     image: gaia-live
     container_name: gaia-live
     ports:
-      - '5000:8080'
+      - '80:80'

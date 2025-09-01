@@ -15,7 +15,7 @@ authors = [
 [tool.poetry]
 version = "1.0.0"
 packages = [
-    { include = "gaia", from = "src", format = "sdist"}
+    { include = "gaia", from = "src"}
 ]
 include = [
     { path = "src/gaia/conf_default", format = "sdist" },
