@@ -119,7 +119,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # Install system dependencies
-RUN apt-get update && apt-get install - \
+RUN apt-get update && apt-get install -y \
     curl
 
 # Copy over baked environment
