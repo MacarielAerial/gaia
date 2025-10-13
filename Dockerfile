@@ -90,15 +90,18 @@ RUN poetry --version
 # Make working directory
 RUN mkdir -p ${HOME}/app
 
-# Copy source code and python dependency specification
+# Copy over python dependency specification
 COPY pyproject.toml poetry.lock README.md ${HOME}/app/
-COPY src ${HOME}/app/src
 
 # Set working directory
 WORKDIR ${HOME}/app
 
 # Install python dependencies in container
-RUN poetry install --without dev
+RUN poetry install --no-root --without dev
+
+# Install the project itself as a dependency
+COPY src ${HOME}/app/src
+RUN poetry install --only-root
 
 #
 # Multi Stage: Live Image
@@ -123,9 +126,7 @@ RUN apt-get update && apt-get install -y \
     curl
 
 # Copy over baked environment
-# Explicitly copy the otherwise ignore .venv folder
 COPY --from=bake /home/${USERNAME}/app /home/${USERNAME}/app
-COPY --from=bake /home/${USERNAME}/app/.venv /home/${USERNAME}/app/.venv
 
 # Switch to the non-root user
 USER ${USERNAME}
