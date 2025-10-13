@@ -39,7 +39,7 @@ Gaia is a template repository for python applications
     IdentityFile ~/.ssh/work_rsa
     ```
 
-# Current Feature Set
+## Current Feature Set
 
 1. Isolated and deterministic development system environment with **VS Code Dev Container**
 2. Isolated and determinisitc python environment with **Poetry**
