@@ -36,7 +36,7 @@ coverage = {extras = ["toml"], version = "^7.10.7"}
 black = "^25.9.0"
 yamllint = "^1.37.1"
 semgrep = "^1.139.0"
-ipykernel = "^7.0.0"
+ipykernel = "^7.1.0"
 nbformat = "^5.10.4"
 ruff = "^0.14.0"
 shellcheck-py = "^0.11.0.1"
