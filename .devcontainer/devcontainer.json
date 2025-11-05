@@ -13,7 +13,7 @@
 	},
     "mounts": [
         // Mount the SSH key folder to share with the host process
-        "source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
     ],
 	"workspaceFolder": "/home/vscode/workspaces/gaia",
 	"customizations": {
