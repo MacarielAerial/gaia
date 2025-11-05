@@ -1,0 +1,7 @@
+name: gaia-dev
+
+services:
+  gaia:
+    # Only necessary to override GPU allocation
+    deploy: !override
+      {}

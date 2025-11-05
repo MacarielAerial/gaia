@@ -1,0 +1,14 @@
+{
+  "name": "${containerWorkspaceFolderBasename}-ci",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../.devcontainer/docker-compose.yml",
+    "docker-compose.yml"
+  ],
+  "service": "${containerWorkspaceFolderBasename}",
+  "workspaceFolder": "/home/vscode/workspaces/gaia",
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {}
+  },
+  "remoteUser": "vscode"
+}

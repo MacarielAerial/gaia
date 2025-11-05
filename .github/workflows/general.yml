@@ -16,6 +16,7 @@ jobs:
       - name: Build and test with devcontainer
         uses: devcontainers/ci@v0.3
         with:
+          configFile: .devcontainer-ci/devcontainer.json
           runCmd: |
             poetry install \
             && poetry run ./lint.sh \
