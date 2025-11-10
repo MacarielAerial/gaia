@@ -29,7 +29,7 @@ fastapi = "^0.121.0"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^7.0.0"
-pytest = "^8.4.2"
+pytest = "^9.0.0"
 mypy = "^1.18.2"
 flake8 = "^7.3.0"
 coverage = {extras = ["toml"], version = "^7.11.0"}
