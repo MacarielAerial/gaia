@@ -30,7 +30,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
 RUN apt-get update && apt-get install -y \
     curl \
     git \
-    git-lfs
+    git-lfs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
@@ -72,7 +73,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Install curl
 RUN apt-get update && apt-get install -y \
-    curl
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
@@ -123,7 +125,8 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy over baked environment
 COPY --from=bake /home/${USERNAME}/app /home/${USERNAME}/app
