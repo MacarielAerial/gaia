@@ -23,15 +23,11 @@ fi
 echo "Checking PEP8 compliance..."
 flake8 .
 
-echo "Running Ruff formatter and checker..."
+echo "Running Ruff checker..."
 if [[ "${CI:=}" == "true" ]]; then
-  ruff format src --check --diff
-  ruff format tests --check --diff
   ruff check src
   ruff check tests
 else
-  ruff format src
-  ruff format tests
   ruff check src
   ruff check tests
 fi
