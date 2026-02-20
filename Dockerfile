@@ -1,12 +1,14 @@
+# syntax=docker/dockerfile:1.7
+
 # Global Build Arguments
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-#
-# Multi Stage: Dev Image
-#
-FROM python:3.12-slim-bookworm AS dev
+# =========================
+# Multi Stage: Dev
+# =========================
+FROM python:3.14-slim AS dev
 
 # Arguments associated with the non-root user
 ARG USERNAME
@@ -14,44 +16,42 @@ ARG USER_UID
 ARG USER_GID
 
 # Set environemntal variables
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_HOME=/home/${USERNAME}/poetry \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
-
-# Add poetry executable to PATH
-ENV PATH="$POETRY_HOME/bin:$PATH"
-
-# Add the non-root user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+    UV_SYSTEM_PYTHON=1
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
     git \
     git-lfs \
     && rm -rf /var/lib/apt/lists/*
 
+# Add the non-root user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
 
 # Explicitly populate home directory variable
 ENV HOME=/home/${USERNAME}
 
-# Install poetry
-RUN mkdir -p ${POETRY_HOME} && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
-    poetry self add poetry-plugin-up
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Verify Poetry installation
-RUN poetry --version
+# Make sure uv is reachable by the user shell
+ENV PATH="${HOME}/.local/bin:${PATH}"
 
-#
-# Multi Stage: Bake Image
-#
+# Check uv is installed
+RUN uv --version
 
-FROM python:3.12-slim-bookworm AS bake
+# =========================
+# Multi Stage: Bake
+# =========================
+
+FROM python:3.14-slim AS bake
 
 # Arguments associated with the non-root user
 ARG USERNAME
@@ -59,22 +59,19 @@ ARG USER_UID
 ARG USER_GID
 
 # Set environemntal variables
-ENV POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_HOME=/home/${USERNAME}/poetry \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DEBIAN_FRONTEND=noninteractive
+    UV_SYSTEM_PYTHON=1
 
-# Add poetry executable to PATH
-ENV PATH="$POETRY_HOME/bin:$PATH"
+# Install curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
-
-# Install curl
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
@@ -82,70 +79,75 @@ USER ${USERNAME}
 # Explicitly populate home directory variable
 ENV HOME=/home/${USERNAME}
 
-# Install poetry
-RUN mkdir -p ${POETRY_HOME} && \
-    curl -sSL https://install.python-poetry.org | python -
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Verify Poetry installation
-RUN poetry --version
+# Make sure uv is reachable by the user shell
+ENV PATH="${HOME}/.local/bin:${PATH}"
+
+# Check uv is installed
+RUN uv --version
 
 # Make working directory
-RUN mkdir -p ${HOME}/app
-
-# Copy over python dependency specification
-COPY pyproject.toml poetry.lock README.md ${HOME}/app/
-
-# Set working directory
 WORKDIR ${HOME}/app
 
-# Install python dependencies in container
-RUN poetry install --no-root --without dev
+# Copy over python dependency metadata
+COPY pyproject.toml uv.lock README.md ${HOME}/app/
 
-# Install the project itself as a dependency
-COPY src ${HOME}/app/src
-RUN poetry install --only-root
+# Set uv's project environment
+ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
+
+# Install python dependencies
+RUN uv sync --frozen --no-dev
+
+# Copy over source code
+COPY src/ config/ ${HOME}/app/
+
+# Install source application
+RUN uv pip install --no-deps .
 
 #
 # Multi Stage: Live Image
 #
 
-FROM python:3.12-slim-bookworm AS live
+FROM python:3.14-slim AS live
 
 # Reference build arguments
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
 
-# Prevent interactive prompts during package update
-ENV DEBIAN_FRONTEND=noninteractive
+# Set environemntal variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy over baked environment
-COPY --from=bake /home/${USERNAME}/app /home/${USERNAME}/app
-
 # Switch to the non-root user
 USER ${USERNAME}
 
-# Set working directory
-WORKDIR /home/${USERNAME}/app
+# Explicitly populate home directory variable
+ENV HOME=/home/${USERNAME}
+
+# Make working directory
+WORKDIR ${HOME}/app
+
+# Copy over baked environment
+COPY --from=bake ${HOME}/app/.venv ${HOME}/app/.venv
+COPY --from=bake ${HOME}/app/config ${HOME}/app/config
 
 # Set executables in PATH
-ENV PATH="/home/${USERNAME}/app/.venv/bin:$PATH"
+ENV PATH="${HOME}/app/.venv/bin:$PATH"
 
 # Expose the service port
-EXPOSE 80
-
-# Implement an health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:80/health-check || exit 1
+EXPOSE 8000
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT ["uvicorn", "gaia.main:app", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn", "{{ package_name }}.main:app", "--host", "0.0.0.0", "--port", "8000"]

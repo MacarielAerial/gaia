@@ -1,49 +1,46 @@
 [project]
-name = "gaia"
-dynamic = [ "version", "dependencies" ]
-description = "Template repository for a python project"
-license = { text = "Proprietary" }
+name = "{{ project_slug }}"
+version = "0.1.0"
+description = "Template repository for a FastAPI project"
 readme = "README.md"
-requires-python = ">=3.12, <3.13"
-authors = [
-    { name = "Yifei Yu", email = "yifeiyu.eos@gmail.com" }
+requires-python = ">=3.14"
+readme = "README.md"
+license = { text = "Proprietary" }
+authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "pydantic>=2.10",
 ]
 
 [project.urls]
 # repository = ""
 
-[tool.poetry]
-version = "1.0.0"
-packages = [
-    { include = "gaia", from = "src"}
+[dependency-groups]
+dev = [
+  "ruff>=0.8",
+  "mypy>=1.13",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "httpx>=0.27",
+  "testcontainers>=4.9",
+  "types-requests>=2.32.0.20241016",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ package_name }}"]
+
+[tool.hatch.build.targets.sdist]
 include = [
-    { path = "src/gaia/conf_default", format = "sdist" },
-    { path = "notebooks", format = "sdist" }
+  "/src",
+  "/config",
+  "/README.md",
+  "/pyproject.toml",
 ]
-
-[tool.poetry.dependencies]
-pydantic = "^2.12.5"
-pandas = "^2.3.3"
-fastapi = "^0.128.0"
-
-[tool.poetry.group.dev.dependencies]
-isort = "^7.0.0"
-pytest = "^9.0.2"
-mypy = "^1.19.1"
-flake8 = "^7.3.0"
-coverage = {extras = ["toml"], version = "^7.13.1"}
-black = "^25.12.0"
-yamllint = "^1.38.0"
-ipykernel = "^7.1.0"
-nbformat = "^5.10.4"
-ruff = "^0.14.11"
-shellcheck-py = "^0.11.0.1"
-python-dotenv = "^1.2.1"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
 
 [tool.black]
 line-length = 88
@@ -62,29 +59,33 @@ log_cli = true
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
-addopts = "--junitxml=test_report.xml"
-testpaths = "tests"
+addopts = "--ra --junitxml=test_report.xml"
+asyncio_mode = "auto"
+testpaths = ["tests"]
 
 [tool.mypy]
-files = "src"
+python_version = "3.14"
 mypy_path = "src"
+packages = ["{{ package_name }}"]
 exclude = [
     ".venv"
 ]
-namespace_packages = true
-explicit_package_bases = true
-disallow_untyped_defs = true
-disallow_any_unimported = true
+
+# Relatively loose settings
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unreachable = true
 no_implicit_optional = true
 check_untyped_defs = true
-warn_return_any = true
-warn_unused_ignores = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+ignore_missing_imports = true
+pretty = true
 show_error_codes = true
 
 [[tool.mypy.overrides]]
 module = []
-ignore_missing_imports = true
-warn_return_any = false
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -123,7 +124,23 @@ directory = "htmlcov"
 [tool.coverage.xml]
 output = "coverage.xml"
 
-[tool.ruff]
+[too.tuff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "B",   # flake8-bugbear
+  "UP",  # pyupgrade
+]
+ignore = [
+  "E501", # let formatter handle line length
+]
+
+[tool.ruff.format]
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
@@ -154,47 +171,6 @@ exclude = [
     "venv",
 ]
 
-# Same as Black.
-line-length = 88
-indent-width = 4
-
-[tool.ruff.lint]
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
-select = ["E4", "E7", "E9", "F"]
-ignore = []
-
-# Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["ALL"]
-unfixable = []
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-[tool.ruff.format]
-# Like Black, use double quotes for strings.
+# Default
 quote-style = "double"
-
-# Like Black, indent with spaces, rather than tabs.
 indent-style = "space"
-
-# Like Black, respect magic trailing commas.
-skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
-line-ending = "auto"
-
-# Enable auto-formatting of code examples in docstrings. Markdown,
-# reStructuredText code/literal blocks and doctests are all supported.
-#
-# This is currently disabled by default, but it is planned for this
-# to be opt-out in the future.
-docstring-code-format = false
-
-# Set the line length limit used when formatting code snippets in
-# docstrings.
-#
-# This only has an effect when the `docstring-code-format` setting is
-# enabled.
-docstring-code-line-length = "dynamic"

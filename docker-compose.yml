@@ -1,13 +1,14 @@
-name: gaia-live
+# This docker compose file is used in production
+name: {{ project_slug }}-live
 
 services:
-  gaia:
+  {{  project_slug  }}:
     build:
       context: .
-      # This docker compose file is used in production
-      target: live
       dockerfile: Dockerfile
-    image: gaia-live
-    container_name: gaia-live
+      target: live
+    image: {{ project_slug }}-live:latest
     ports:
-      - '80:80'
+      - "${PORT:-8000}:8000"
+    init: true
+    restart: unless-stopped

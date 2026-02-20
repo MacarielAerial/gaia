@@ -1,39 +1,37 @@
 {
-	"name": "${containerWorkspaceFolderBasename}",
-	"dockerComposeFile": [
-		"../docker-compose.yml",
-		"docker-compose.yml"
-	],
-    "service": "${containerWorkspaceFolderBasename}",
+	"name": "devcontainer",
+	"dockerComposeFile": ["docker-compose.yml"],
+	"service": "devcontainer",
 	"remoteEnv": {
 		"CI": "${localEnv:CI}"
 	},
-	"features":  {
-		"ghcr.io/devcontainers/features/sshd:1": {}
-	},
-    "mounts": [
-        // Mount the SSH key folder to share with the host process
-        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
-    ],
-	"workspaceFolder": "/home/vscode/workspaces/gaia",
+	"workspaceFolder": "/workspaces/workspace",
+	"shutdownAction": "stopCompose",
 	"customizations": {
 		"vscode": {
 			"settings": {
 				"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+				"python.testing.pytestEnabled": true,
+				"python.testing.pytestArgs": ["tests"],
+				"python.analysis.autoImportCompletions": true,
 				"terminal.integrated.defaultProfile.linux": "bash",
 				"terminal.integrated.profiles.linux": {"bash": {"path": "bash"}},
-				"remote.ssh.enableAgentForwarding": true,
-				"python.analysis.autoImportCompletions": true
+				"editor.formatOnSave": true,
+				"editor.codeActionsOnSave": {
+				"source.fixAll": "explicit",
+				"source.organizeImports": "explicit"
+				}
 			},
 			"extensions": [
 				"vscodevim.vim",
 				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"ms-python.mypy-type-checker",
 				"charliermarsh.ruff",
 				"ms-toolsai.jupyter",
 				"mechatroner.rainbow-csv",
 				"tamasfe.even-better-toml",
 				"davidanson.vscode-markdownlint",
-				"fnando.linter",
 				"ms-azuretools.vscode-containers",
 				"github.vscode-github-actions"
 			]

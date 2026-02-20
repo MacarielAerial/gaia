@@ -1,17 +1,27 @@
-name: gaia-dev
-
 services:
-  gaia:
+  devcontainer:
     build:
-      context: .
+      context: ..
+      dockerfile: Dockerfile
       # Overwrite the main file to use dev stage
       target: dev
-      dockerfile: Dockerfile
-    image: gaia-dev
-    container_name: gaia-dev
+    image: devcontainer:latest
     # Prevent the container from exiting after initialisation
-    command: /bin/sh -c "while sleep 1000; do :; done"
-
+    command: sleep infinity
+    init: true
     volumes:
-      # Replace placeholder service name
-      - .:/home/vscode/workspaces/gaia:cached
+      # Source directory mount
+      - ..:/workspaces/workspace:cached
+
+      # Enable Testcontainers by allowing the devcontainer to talk to the host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # SSH agent forwarding (Linux default):
+      - ${SSH_AUTH_SOCK}:/ssh-agent:ro
+
+      # Docker Desktop (macOS/Windows) alternative:
+      # - /run/host-services/ssh-auth.sock:/ssh-agent:ro
+    environment:
+      # Path of the forwarded agent socket
+      SSH_AUTH_SOCK: /ssh-agent
+      UV_PROJECT_ENVIRONMENT: /workspaces/${WORKSPACE_NAME}/.venv
