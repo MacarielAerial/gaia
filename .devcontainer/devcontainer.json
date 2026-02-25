@@ -7,13 +7,17 @@
 	},
 	"workspaceFolder": "/workspaces/workspace",
 	"shutdownAction": "stopCompose",
+    "mounts": [
+        // Mount the SSH key folder to share with the host process
+        "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,readonly,type=bind"
+    ],
 	"customizations": {
 		"vscode": {
 			"settings": {
 				"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
 				"python.testing.pytestEnabled": true,
-				"python.testing.pytestArgs": ["tests"],
 				"python.analysis.autoImportCompletions": true,
+				"python.analysis.typeCheckingMode": "basic",
 				"terminal.integrated.defaultProfile.linux": "bash",
 				"terminal.integrated.profiles.linux": {"bash": {"path": "bash"}},
 				"editor.formatOnSave": true,

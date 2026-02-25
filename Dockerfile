@@ -26,6 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     git-lfs \
+    just \
+    openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
@@ -46,6 +48,9 @@ ENV PATH="${HOME}/.local/bin:${PATH}"
 
 # Check uv is installed
 RUN uv --version
+
+# Install template render dependencies
+RUN uv tool install copier
 
 # =========================
 # Multi Stage: Bake

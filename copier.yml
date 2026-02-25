@@ -1,0 +1,26 @@
+_templates_suffix: ".jinja"
+
+_envops:
+  block_start_string: "{%"
+  block_end_string: "%}"
+  comment_start_string: "{#"
+  comment_end_string: "#}"
+  variable_start_string: "{{"
+  variable_end_string: "}}"
+  keep_trailing_newline: true
+
+project_name:
+  type: str
+  default: "FastAPI Service"
+
+project_slug:
+  type: str
+  default: "fastapi-service"
+
+package_name:
+  type: str
+  default: "fastapi_service"
+
+version:
+  type: str
+  default: "0.1.0"

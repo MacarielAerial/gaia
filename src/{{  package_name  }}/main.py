@@ -1,0 +1,47 @@
+from __future__ import annotations
+
+import logging
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
+from fastapi import FastAPI
+
+from {{ package_name }}.api.health import router as health_router
+from {{ package_name }}.api.v1.router import router as v1_router
+from {{ package_name }}.logging import configure_logging
+from {{ package_name }}.settings import get_settings
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    settings = get_settings()
+    app.state.settings = settings
+
+    log = logging.getLogger(__name__)
+    log.info("Starting %s (env=%s)", settings.app_name, settings.environment)
+
+    yield
+
+    log.info("Shutting down %s", settings.app_name)
+
+
+def create_app() -> FastAPI:
+    settings = get_settings()
+    configure_logging(level=settings.log_level, json=settings.log_json)
+
+    app = FastAPI(
+        title=settings.app_name,
+        version="0.1.0",
+        lifespan=lifespan,
+    )
+
+    # Non-versioned routes
+    app.include_router(health_router)
+
+    # Versioned API routes
+    app.include_router(v1_router)
+
+    return app
+
+
+app = create_app()
