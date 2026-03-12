@@ -1,0 +1,25 @@
+set dotenv-load := true
+set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
+
+default:
+  @just --list
+
+# Install dependencies (dev included)
+install:
+  uv sync --dev
+
+# Lint pipeline
+lint:
+  uv run ruff check . --fix
+  uv run ruff format .
+  uv run mypy .
+  uv run yamllint .
+  find . -type f \( -name "*.sh" -o -name "*.bash" \) -print0 | xargs -0r shellcheck
+
+# Run tests with coverage
+test:
+  uv run pytest --cov={{ package_name }} --cov-report=term-missing
+
+# Run the app locally
+run:
+  uv run uvicorn {{ package_name }}.main:app --host ${APP_HOST:-0.0.0.0} --port ${APP_PORT:-8000} --reload

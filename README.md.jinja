@@ -23,7 +23,22 @@
 2. Render the project
 
     ```sh
-    just generate ../{{  project_name  }}
+    just generate ./{{  project_slug  }}
+    ```
+
+3. Optionally run code quality check on the rendered project
+
+    ```sh
+    cd ./{{  project_slug  }}
+    just install
+    just lint
+    just test
+    ```
+
+4. Optionally start the service in the rendered project
+
+    ```sh
+    just run
     ```
 
 ## Note
