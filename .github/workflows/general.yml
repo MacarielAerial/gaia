@@ -18,6 +18,4 @@ jobs:
         with:
           configFile: .devcontainer-ci/devcontainer.json
           runCmd: |
-            poetry install \
-            && poetry run ./lint.sh \
-            && poetry run ./test.sh
+            just validate

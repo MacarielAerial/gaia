@@ -37,7 +37,8 @@
 				"tamasfe.even-better-toml",
 				"davidanson.vscode-markdownlint",
 				"ms-azuretools.vscode-containers",
-				"github.vscode-github-actions"
+				"github.vscode-github-actions",
+				"wholroyd.jinja"
 			]
 		}
 	},

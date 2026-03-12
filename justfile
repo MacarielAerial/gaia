@@ -8,41 +8,48 @@ default:
 install:
   uv sync --dev
 
-# Lint pipeline: format → lint → typecheck
+# Lint pipeline
 lint:
+  uv run ruff check . --fix --show-fixes
   uv run ruff format .
-  uv run ruff check .
   uv run mypy .
+  uv run yamllint .
+  find . -type f \( -name "*.sh" -o -name "*.bash" \) -not -path "./_rendered/*" -print0 | xargs -0r shellcheck
 
-# Run tests
+# Run tests with coverage
 test:
-  uv run pytest
+  uv run pytest --cov={{{{ package_name }}}} --cov-report=term-missing
 
 # Run the app locally
 run:
   uv run uvicorn {{{{ package_name }}}}.main:app --host 0.0.0.0 --port 8000 --reload
 
 # -------------------------
-# Template validation only
+# Consumer workflow
 # -------------------------
 
-render:
+generate destination:
+  copier copy . {{ destination }} --trust --vcs-ref HEAD
+
+# -------------------------
+# Template maintainer only
+# -------------------------
+
+render-ci:
   rm -rf _rendered
-  copier copy . _rendered --trust
+  copier copy . _rendered --trust --vcs-ref HEAD --defaults
 
 render-install:
-  uv --project _rendered sync --dev
+  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just install'
 
 render-lint:
-  uv --project _rendered run ruff format .
-  uv --project _rendered run ruff check .
-  uv --project _rendered run mypy .
+  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just lint'
 
 render-test:
-  uv --project _rendered run pytest
+  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just test'
 
 validate:
-  just render
+  just render-ci
   just render-install
   just render-lint
   just render-test

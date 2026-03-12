@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git-lfs \
     just \
     openssh-client \
+    shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
@@ -111,9 +112,9 @@ COPY src/ config/ ${HOME}/app/
 # Install source application
 RUN uv pip install --no-deps .
 
-#
-# Multi Stage: Live Image
-#
+# =========================
+# Multi Stage: Live
+# =========================
 
 FROM python:3.14-slim AS live
 
@@ -121,10 +122,14 @@ FROM python:3.14-slim AS live
 ARG USERNAME
 ARG USER_UID
 ARG USER_GID
+ARG APP_HOST=0.0.0.0
+ARG APP_PORT=8000
 
 # Set environemntal variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    APP_HOST=$APP_HOST \
+    ARG_PORT=$ARG_PORT
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -152,7 +157,7 @@ COPY --from=bake ${HOME}/app/config ${HOME}/app/config
 ENV PATH="${HOME}/app/.venv/bin:$PATH"
 
 # Expose the service port
-EXPOSE 8000
+EXPOSE $APP_PORT
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT ["uvicorn", "{{ package_name }}.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["uvicorn", "{{ package_name }}.main:app", "--host", "${APP_HOST}", "--port", "${APP_PORT}"]

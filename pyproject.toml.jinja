@@ -7,9 +7,10 @@ requires-python = ">=3.14"
 license = { text = "Proprietary" }
 authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
 dependencies = [
-  "fastapi>=0.115",
-  "uvicorn[standard]>=0.32",
-  "pydantic>=2.10",
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic",
+  "pydantic-settings",
 ]
 
 [project.urls]
@@ -17,13 +18,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-  "ruff>=0.8",
-  "mypy>=1.13",
-  "pytest>=8.3",
-  "pytest-asyncio>=0.24",
-  "httpx>=0.27",
-  "testcontainers>=4.9",
-  "types-requests>=2.32.0.20241016",
+  "httpx",
+  "ruff",
+  "mypy",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "testcontainers",
+  "types-requests",
+  "yamllint"
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -58,7 +61,7 @@ log_cli = true
 log_cli_level = "DEBUG"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
-addopts = "--ra --junitxml=test_report.xml"
+addopts = "--junitxml=test_report.xml"
 asyncio_mode = "auto"
 testpaths = ["tests"]
 
