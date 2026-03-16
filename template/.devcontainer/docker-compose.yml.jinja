@@ -15,5 +15,3 @@ services:
 
       # Enable Testcontainers by allowing the devcontainer to talk to the host Docker daemon
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      UV_PROJECT_ENVIRONMENT: /workspaces/${WORKSPACE_NAME}/.venv
