@@ -1,0 +1,161 @@
+# syntax=docker/dockerfile:1.7
+
+# Global Build Arguments
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# =========================
+# Multi Stage: Dev
+# =========================
+FROM python:3.14-slim AS dev
+
+# Arguments associated with the non-root user
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+
+# Set environemntal variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_SYSTEM_PYTHON=1 \
+    UV_PROJECT_ENVIRONMENT=/workspaces/{{ package_name }}/.venv
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    git \
+    git-lfs \
+    just \
+    openssh-client \
+    shellcheck \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the non-root user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+# Switch to the non-root user to install applications on the user level
+USER ${USERNAME}
+
+# Explicitly populate home directory variable
+ENV HOME=/home/${USERNAME}
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Make sure uv is reachable by the user shell
+ENV PATH="${HOME}/.local/bin:${PATH}"
+
+# Check uv is installed
+RUN uv --version
+
+# =========================
+# Multi Stage: Bake
+# =========================
+
+FROM python:3.14-slim AS bake
+
+# Arguments associated with the non-root user
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+
+# Set environemntal variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_SYSTEM_PYTHON=1
+
+# Install curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the non-root user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+# Switch to the non-root user to install applications on the user level
+USER ${USERNAME}
+
+# Explicitly populate home directory variable
+ENV HOME=/home/${USERNAME}
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Make sure uv is reachable by the user shell
+ENV PATH="${HOME}/.local/bin:${PATH}"
+
+# Check uv is installed
+RUN uv --version
+
+# Make working directory
+WORKDIR ${HOME}/app
+
+# Copy over python dependency metadata
+COPY pyproject.toml uv.lock README.md ${HOME}/app/
+
+# Set uv's project environment
+ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
+
+# Install python dependencies
+RUN uv sync --frozen --no-dev
+
+# Copy over source code
+COPY src/ config/ ${HOME}/app/
+
+# Install source application
+RUN uv pip install --no-deps .
+
+# =========================
+# Multi Stage: Live
+# =========================
+
+FROM python:3.14-slim AS live
+
+# Reference build arguments
+ARG USERNAME
+ARG USER_UID
+ARG USER_GID
+ARG APP_HOST=0.0.0.0
+ARG APP_PORT=8000
+
+# Set environemntal variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    APP_HOST=$APP_HOST \
+    APP_PORT=$APP_PORT
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add the non-root user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+
+# Switch to the non-root user
+USER ${USERNAME}
+
+# Explicitly populate home directory variable
+ENV HOME=/home/${USERNAME}
+
+# Make working directory
+WORKDIR ${HOME}/app
+
+# Copy over baked environment
+COPY --from=bake ${HOME}/app/.venv ${HOME}/app/.venv
+COPY --from=bake ${HOME}/app/config ${HOME}/app/config
+
+# Set executables in PATH
+ENV PATH="${HOME}/app/.venv/bin:$PATH"
+
+# Expose the service port
+EXPOSE $APP_PORT
+
+# Auto start the fastapi service on start-up
+ENTRYPOINT uvicorn {{ package_name }}.main:app --host ${APP_HOST}, --port ${APP_PORT}

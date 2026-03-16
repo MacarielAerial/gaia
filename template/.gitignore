@@ -155,4 +155,3 @@ cython_debug/
 #.idea/
 
 # Copier render directory
-rendered/

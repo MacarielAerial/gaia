@@ -16,17 +16,17 @@ generate destination:
 # -------------------------
 
 render-ci:
-  rm -rf _rendered
-  copier copy . _rendered --trust --vcs-ref HEAD --defaults
+  rm -rf rendered
+  copier copy . rendered --trust --vcs-ref HEAD --defaults
 
 render-install:
-  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just install'
+  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just install'
 
 render-lint:
-  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just lint'
+  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just lint'
 
 render-test:
-  UV_PROJECT_ENVIRONMENT="$PWD/_rendered/.venv" bash -lc 'cd _rendered && just test'
+  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just test'
 
 validate:
   just render-ci

@@ -1,8 +1,8 @@
 {
-	"name": "${containerWorkspaceFolderBasename}",
+	"name": "{{  project_slug }}",
 	"dockerComposeFile": ["docker-compose.yml"],
-	"service": "${containerWorkspaceFolderBasename}",
-	"workspaceFolder": "/workspaces/gaia",
+	"service": "{{  project_slug  }}",
+	"workspaceFolder": "/workspaces/{{  package_name  }}",
 	"shutdownAction": "stopCompose",
     "mounts": [
         // Mount the SSH key folder to share with the host process
@@ -35,7 +35,8 @@
 				"davidanson.vscode-markdownlint",
 				"ms-azuretools.vscode-containers",
 				"github.vscode-github-actions",
-				"wholroyd.jinja"
+				"wholroyd.jinja",
+				"nefrob.vscode-just-syntax"
 			]
 		}
 	},

@@ -1,3 +1,4 @@
+_subdirectory: template
 _templates_suffix: ".jinja"
 
 _envops:
@@ -28,7 +29,3 @@ author_name:
 author_email:
   type: str
   default: "unknown@unknown.com"
-
-version:
-  type: str
-  default: "0.0.1"

@@ -1,7 +1,7 @@
 [project]
 name = "{{ project_slug }}"
 version = "0.1.0"
-description = "Template repository for a FastAPI project"
+description = "A FastAPI project"
 readme = "README.md"
 requires-python = ">=3.14"
 license = { text = "Proprietary" }
@@ -24,8 +24,6 @@ dev = [
   "pytest",
   "pytest-asyncio",
   "pytest-cov",
-  "testcontainers",
-  "types-requests",
   "yamllint"
 ]
 
@@ -74,8 +72,8 @@ ignore_missing_imports = true
 pretty = true
 show_error_codes = true
 
-[[tool.mypy.overrides]]
-module = []
+# [[tool.mypy.overrides]]
+# module = []
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

@@ -22,9 +22,7 @@ def configure_logging(*, level: str = "INFO", json: bool = False) -> None:
             fmt='{"level":"%(levelname)s","logger":"%(name)s","msg":"%(message)s"}'
         )
     else:
-        formatter = logging.Formatter(
-            fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
-        )
+        formatter = logging.Formatter(fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
     handler.setFormatter(formatter)
     root.addHandler(handler)

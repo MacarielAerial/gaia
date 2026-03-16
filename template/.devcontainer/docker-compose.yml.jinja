@@ -1,19 +1,19 @@
 services:
-  gaia:
+  {{  project_slug  }}:
     build:
       context: ..
       dockerfile: Dockerfile
       # Overwrite the main file to use dev stage
       target: dev
-    image: gaia:latest
+    image: {{  project_slug  }}:latest
     # Prevent the container from exiting after initialisation
     command: sleep infinity
     init: true
     volumes:
       # Source directory mount
-      - ..:/workspaces/gaia:cached
+      - ..:/workspaces/{{  package_name  }}:cached
 
-      # Allow the devcontainer to talk to the host Docker daemon
+      # Enable Testcontainers by allowing the devcontainer to talk to the host Docker daemon
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       UV_PROJECT_ENVIRONMENT: /workspaces/${WORKSPACE_NAME}/.venv
