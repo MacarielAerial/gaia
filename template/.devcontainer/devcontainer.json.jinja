@@ -1,6 +1,9 @@
 {
 	"name": "{{  project_slug }}",
-	"dockerComposeFile": ["docker-compose.yml"],
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.yml"
+	],
 	"service": "{{  project_slug  }}",
 	"workspaceFolder": "/workspaces/{{  package_name  }}",
 	"shutdownAction": "stopCompose",
