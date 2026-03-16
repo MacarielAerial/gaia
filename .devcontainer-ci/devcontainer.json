@@ -3,5 +3,6 @@
   "dockerComposeFile": [
     "../.devcontainer/docker-compose.yml",
     "docker-compose.yml"
-  ]
+  ],
+	"service": "gaia",
 }
