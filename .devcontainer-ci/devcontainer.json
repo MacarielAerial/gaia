@@ -1,7 +1,6 @@
 {
   "name": "${containerWorkspaceFolderBasename}-ci",
   "dockerComposeFile": [
-    "../docker-compose.yml",
     "../.devcontainer/docker-compose.yml",
     "docker-compose.yml"
   ],
