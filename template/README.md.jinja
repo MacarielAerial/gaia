@@ -1,24 +1,27 @@
-# Gaia
+# {{  project_name  }}
 
 ## Summary
 
-Gaia is a template project for a python-based FastAPI service
+{{  project_name  }} is a FastAPI based service.
 
 ## Code Snippets
 
-### Template Maintainer Workflow
+1. Spin up a dev container
 
-1. Spin up a dev stage container
-
-2. Validate the template
+2. Run code quality checks
 
     ```sh
-    just validate
+    cd ./{{  package_name  }}
+    just install
+    just lint
+    just test
     ```
 
-### Template Consumer Workflow
+3. Start the service
 
-See README.md of the rendered project
+    ```sh
+    just run
+    ```
 
 ## Note
 

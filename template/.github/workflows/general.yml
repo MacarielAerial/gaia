@@ -18,4 +18,6 @@ jobs:
         with:
           configFile: .devcontainer-ci/devcontainer.json
           runCmd: |
-            just validate
+            just install && \
+            just lint && \
+            just test

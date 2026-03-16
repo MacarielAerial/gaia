@@ -1,0 +1,14 @@
+# This docker compose file is used in production
+name: {{  project_slug  }}-live
+
+services:
+  {{  project_slug  }}:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: live
+    image: {{ project_slug }}-live:latest
+    ports:
+      - "${PORT:-8000}:8000"
+    init: true
+    restart: unless-stopped

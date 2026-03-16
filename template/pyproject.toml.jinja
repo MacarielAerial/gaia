@@ -1,0 +1,164 @@
+[project]
+name = "{{ project_slug }}"
+version = "0.1.0"
+description = "A FastAPI project"
+readme = "README.md"
+requires-python = ">=3.14"
+license = { text = "Proprietary" }
+authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "pydantic",
+  "pydantic-settings",
+]
+
+[project.urls]
+# repository = ""
+
+[dependency-groups]
+dev = [
+  "httpx",
+  "ruff",
+  "mypy",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
+  "yamllint"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ package_name }}"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/config",
+  "/README.md",
+  "/pyproject.toml",
+]
+
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "DEBUG"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+addopts = "--junitxml=test_report.xml"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.14"
+mypy_path = "src"
+packages = ["{{ package_name }}"]
+exclude = [
+    ".venv"
+]
+
+# Relatively loose settings
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unreachable = true
+no_implicit_optional = true
+check_untyped_defs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+ignore_missing_imports = true
+pretty = true
+show_error_codes = true
+
+# [[tool.mypy.overrides]]
+# module = []
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 0
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    '''if self\.debug''',
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    '''@(abc\.)?abstractmethod''',
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "F",   # pyflakes
+  "I",   # isort
+  "B",   # flake8-bugbear
+  "UP",  # pyupgrade
+]
+ignore = [
+  "E501", # let formatter handle line length
+]
+
+[tool.ruff.format]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+
+# Default
+quote-style = "double"
+indent-style = "space"
