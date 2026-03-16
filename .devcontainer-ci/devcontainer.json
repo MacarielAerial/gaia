@@ -3,11 +3,5 @@
   "dockerComposeFile": [
     "../.devcontainer/docker-compose.yml",
     "docker-compose.yml"
-  ],
-  "service": "${containerworkspaceFolderbasename}",
-  "workspaceFolder": "/home/vscode/workspaces/gaia",
-  "features": {
-    "ghcr.io/devcontainers/features/sshd:1": {}
-  },
-  "remoteUser": "vscode"
+  ]
 }

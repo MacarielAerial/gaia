@@ -1,7 +1,7 @@
 {
 	"name": "${containerWorkspaceFolderBasename}",
 	"dockerComposeFile": ["docker-compose.yml"],
-	"service": "${containerWorkspaceFolderBasename}",
+	"service": "gaia",
 	"workspaceFolder": "/vscode/workspaces/gaia",
 	"shutdownAction": "stopCompose",
     "mounts": [
