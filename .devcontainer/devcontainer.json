@@ -2,7 +2,7 @@
 	"name": "${containerWorkspaceFolderBasename}",
 	"dockerComposeFile": ["docker-compose.yml"],
 	"service": "${containerWorkspaceFolderBasename}",
-	"workspaceFolder": "/workspaces/gaia",
+	"workspaceFolder": "/vscode/workspaces/gaia",
 	"shutdownAction": "stopCompose",
     "mounts": [
         // Mount the SSH key folder to share with the host process
