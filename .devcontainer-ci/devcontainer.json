@@ -5,6 +5,6 @@
     "docker-compose.yml"
   ],
 	"service": "gaia",
-	"workspaceFolder": "/vscode/workspaces/gaia",
+	"workspaceFolder": "/home/vscode/workspaces/gaia",
 	"shutdownAction": "stopCompose"
 }
