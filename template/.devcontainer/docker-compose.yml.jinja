@@ -1,7 +1,9 @@
+name: {{  project_slug  }}-dev
+
 services:
   {{  project_slug  }}:
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
       # Overwrite the main file to use dev stage
       target: dev
@@ -10,8 +12,8 @@ services:
     command: sleep infinity
     init: true
     volumes:
-      # Source directory mount
-      - ..:/vscode/workspaces/{{  package_name  }}:cached
+      # Mount the source directory
+      - .:/home/vscode/workspaces/{{  package_name  }}
 
       # Enable Testcontainers by allowing the devcontainer to talk to the host Docker daemon
       - /var/run/docker.sock:/var/run/docker.sock

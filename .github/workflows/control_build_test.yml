@@ -1,0 +1,68 @@
+name: control_build_test
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - '*'
+  pull_request:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  control-env:
+    name: Validate control environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Build and test control devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          push: never
+          configFile: .devcontainer-ci/devcontainer.json
+          runCmd: |
+            just validate
+
+  rendered-project:
+    name: Validate rendered project devcontainer
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Install Copier
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install copier
+
+      - name: Render template
+        shell: bash
+        run: |
+          rm -rf rendered
+          copier copy . rendered --trust --vcs-ref HEAD --defaults
+
+      - name: Verify rendered CI devcontainer exists
+        shell: bash
+        run: |
+          test -f rendered/.devcontainer-ci/devcontainer.json
+
+      - name: Build and test rendered project devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          push: never
+          configFile: rendered/.devcontainer-ci/devcontainer.json
+          subFolder: rendered
+          runCmd: |
+            just install
+            just lint
+            just test

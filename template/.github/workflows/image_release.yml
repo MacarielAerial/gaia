@@ -1,4 +1,4 @@
-name: ci_release
+name: image_release
 
 on:  # yamllint disable-line rule:truthy
   release:

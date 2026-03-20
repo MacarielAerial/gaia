@@ -19,7 +19,7 @@ ARG USER_GID
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_SYSTEM_PYTHON=1 \
-    UV_PROJECT_ENVIRONMENT=/workspaces/{{ package_name }}/.venv
+    UV_PROJECT_ENVIRONMENT=/home/${USERNAME}/workspaces/{{ package_name }}/.venv
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git-lfs \
     just \
     openssh-client \
-    shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
@@ -102,13 +101,13 @@ COPY pyproject.toml uv.lock README.md ${HOME}/app/
 ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
 
 # Install python dependencies
-RUN uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy over source code
 COPY src/ config/ ${HOME}/app/
 
 # Install source application
-RUN uv pip install --no-deps .
+RUN uv sync --only-install-project
 
 # =========================
 # Multi Stage: Live
