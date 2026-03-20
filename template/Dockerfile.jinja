@@ -19,7 +19,7 @@ ARG USER_GID
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_SYSTEM_PYTHON=1 \
-    UV_PROJECT_ENVIRONMENT=/home/vscode/workspaces/{{ package_name }}/.venv
+    UV_PROJECT_ENVIRONMENT=/home/${USERNAME}/workspaces/{{ package_name }}/.venv
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -29,7 +29,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git-lfs \
     just \
     openssh-client \
-    shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user

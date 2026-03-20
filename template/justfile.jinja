@@ -14,7 +14,6 @@ lint:
   uv run ruff format .
   uv run mypy .
   uv run yamllint .
-  find . -type f \( -name "*.sh" -o -name "*.bash" \) -print0 | xargs -0r shellcheck
 
 # Run tests with coverage
 test:

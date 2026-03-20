@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git-lfs \
     just \
     openssh-client \
-    shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
