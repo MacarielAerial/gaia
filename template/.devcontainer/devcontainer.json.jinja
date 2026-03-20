@@ -6,6 +6,7 @@
 	],
 	"service": "{{  project_slug  }}",
 	"workspaceFolder": "/home/vscode/workspaces/{{  package_name  }}",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/vscode/workspaces/{{  pakcage_name  }},type=bind",
 	"shutdownAction": "stopCompose",
     "mounts": [
         // Mount the SSH key folder to share with the host process
