@@ -12,8 +12,5 @@ services:
     command: sleep infinity
     init: true
     volumes:
-      # Source directory mount
-      - ..:/home/vscode/workspaces/{{  package_name  }}:cached
-
       # Enable Testcontainers by allowing the devcontainer to talk to the host Docker daemon
       - /var/run/docker.sock:/var/run/docker.sock
