@@ -6,6 +6,9 @@ on:  # yamllint disable-line rule:truthy
       - '*'
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   control-env:
     name: Validate control environment
@@ -13,11 +16,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build and test control devcontainer
         uses: devcontainers/ci@v0.3
         with:
+          push: never
           configFile: .devcontainer-ci/devcontainer.json
           runCmd: |
             just validate
@@ -28,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,6 +59,7 @@ jobs:
       - name: Build and test rendered project devcontainer
         uses: devcontainers/ci@v0.3
         with:
+          push: never
           configFile: rendered/.devcontainer-ci/devcontainer.json
           subFolder: rendered
           runCmd: |
