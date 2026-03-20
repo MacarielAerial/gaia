@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
   pull_request:
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   control-env:
