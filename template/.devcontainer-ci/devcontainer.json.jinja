@@ -5,7 +5,7 @@
     "../.devcontainer/docker-compose.yml",
     "docker-compose.yml"
   ],
-  "service": "${containerWorkspaceFolderBasename}",
+  "service": "{{  project_slug  }}",
   "workspaceFolder": "/home/vscode/workspaces/{{  package_name  }}",
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {}

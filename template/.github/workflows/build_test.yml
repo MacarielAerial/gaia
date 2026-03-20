@@ -1,4 +1,4 @@
-name: ci_general
+name: build_test
 
 on:  # yamllint disable-line rule:truthy
   push:
