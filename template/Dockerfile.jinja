@@ -104,7 +104,7 @@ ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy over source code
-COPY src/ config/ ${HOME}/app/
+COPY src/ ${HOME}/app/
 
 # Install source application
 RUN uv sync --only-install-project
@@ -148,7 +148,6 @@ WORKDIR ${HOME}/app
 
 # Copy over baked environment
 COPY --from=bake ${HOME}/app/.venv ${HOME}/app/.venv
-COPY --from=bake ${HOME}/app/config ${HOME}/app/config
 
 # Set executables in PATH
 ENV PATH="${HOME}/app/.venv/bin:$PATH"
