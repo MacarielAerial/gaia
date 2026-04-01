@@ -104,10 +104,10 @@ ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy over source code
-COPY src/ ${HOME}/app/
+COPY src/ ${HOME}/app/src/
 
 # Install source application
-RUN uv sync --only-install-project
+RUN uv sync --frozen --no-dev --no-editable
 
 # =========================
 # Multi Stage: Live
@@ -156,4 +156,4 @@ ENV PATH="${HOME}/app/.venv/bin:$PATH"
 EXPOSE $APP_PORT
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT uvicorn {{ package_name }}.main:app --host ${APP_HOST}, --port ${APP_PORT}
+ENTRYPOINT ["/bin/sh", "-c", "exec uvicorn {{ package_name }}.main:app --host \"$APP_HOST\" --port \"$APP_PORT\""]
