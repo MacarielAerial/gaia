@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
       # Overwrite the main file to use dev stage
       target: dev
-    image: {{  project_slug  }}:latest
+    image: {{  project_slug  }}-dev:latest
     # Prevent the container from exiting after initialisation
     command: sleep infinity
     init: true
