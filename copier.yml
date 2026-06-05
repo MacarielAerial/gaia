@@ -22,6 +22,14 @@ package_name:
   type: str
   default: "fastapi_service"
 
+python_version:
+  type: str
+  default: "3.14"
+
+uv_version:
+  type: str
+  default: "0.9"
+
 author_name:
   type: str
   default: "unknown"

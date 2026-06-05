@@ -1,60 +1,67 @@
 # syntax=docker/dockerfile:1.7
 
 # Global Build Arguments
-ARG USERNAME=vscode
+ARG PYTHON_VERSION={{  python_version  }}
+ARG USERNAME={{ project_slug }}-svc
 ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+ARG USER_GID=${USER_UID}
+
+# ==============================================================================
+# Multi Stage: Base
+# ==============================================================================
+
+FROM python:${PYTHON_VERSION}-slim AS base
+
+# Copy binary from the official image
+COPY --from=ghcr.io/astral-sh/uv:{{  uv_version  }} /uv /uvx /bin/
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    UV_COMPILE_BYTECODE=1
 
 # =========================
 # Multi Stage: Dev
 # =========================
-FROM python:3.14-slim AS dev
+FROM base AS dev
 
-# Arguments associated with the non-root user
-ARG USERNAME
-ARG USER_UID
-ARG USER_GID
-
-# Set environemntal variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    UV_SYSTEM_PYTHON=1 \
-    UV_PROJECT_ENVIRONMENT=/home/${USERNAME}/workspaces/{{ package_name }}/.venv
+# Intended to use based with dev container
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    git \
-    git-lfs \
-    just \
-    openssh-client \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        git-lfs \
+        just \
+        openssh-client \
+        sudo \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the non-root user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
+    && useradd \
+        --uid "${USER_UID}" \
+        --gid "${USER_GID}" \
+        --create-home \
+        --shell /bin/bash \
+        "${USERNAME}" \
+    && install -d -m 0755 /etc/sudoers.d \
+    && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}" \
+    && chmod 0440 "/etc/sudoers.d/${USERNAME}" \
+    && visudo -cf "/etc/sudoers.d/${USERNAME}"
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
-
-# Explicitly populate home directory variable
-ENV HOME=/home/${USERNAME}
-
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Make sure uv is reachable by the user shell
-ENV PATH="${HOME}/.local/bin:${PATH}"
-
-# Check uv is installed
-RUN uv --version
 
 # =========================
 # Multi Stage: Bake
 # =========================
 
-FROM python:3.14-slim AS bake
+FROM base AS bake
 
 # Arguments associated with the non-root user
 ARG USERNAME
@@ -62,49 +69,29 @@ ARG USER_UID
 ARG USER_GID
 
 # Set environemntal variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    UV_SYSTEM_PYTHON=1
-
-# Install curl
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+ENV UV_NO_DEV=1
 
 # Add the non-root user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
+    && useradd --uid "${USER_UID}" --gid "${USER_GID}" -m "${USERNAME}" -s /usr/sbin/nologin
+
+# Make working directory
+RUN mkdir -p /app && chown "${USER_UID}:${USER_GID}" /app
+
+# Switch to working directory
+WORKDIR /app
+
+# Copy over python dependency metadata
+COPY --chown=${USERNAME}:${USERNAME} pyproject.toml uv.lock README.md ./
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
-
-# Explicitly populate home directory variable
-ENV HOME=/home/${USERNAME}
-
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Make sure uv is reachable by the user shell
-ENV PATH="${HOME}/.local/bin:${PATH}"
-
-# Check uv is installed
-RUN uv --version
-
-# Make working directory
-WORKDIR ${HOME}/app
-
-# Copy over python dependency metadata
-COPY pyproject.toml uv.lock README.md ${HOME}/app/
-
-# Set uv's project environment
-ENV UV_PROJECT_ENVIRONMENT=${HOME}/app/.venv
 
 # Install python dependencies
 RUN uv sync --frozen --no-dev --no-install-project
 
 # Copy over source code
-COPY src/ ${HOME}/app/src/
+COPY --chown=${USERNAME}:${USERNAME} src ./src
 
 # Install source application
 RUN uv sync --frozen --no-dev --no-editable
@@ -113,7 +100,7 @@ RUN uv sync --frozen --no-dev --no-editable
 # Multi Stage: Live
 # =========================
 
-FROM python:3.14-slim AS live
+FROM python:${PYTHON_VERSION}-slim AS live
 
 # Reference build arguments
 ARG USERNAME
@@ -128,32 +115,27 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     APP_HOST=$APP_HOST \
     APP_PORT=$APP_PORT
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
 # Add the non-root user
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
+RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
+    && useradd --uid "${USER_UID}" --gid "${USER_GID}" -m "${USERNAME}" -s /usr/sbin/nologin
+
+# Make working directory
+RUN mkdir -p /app && chown "${USER_UID}:${USER_GID}" /app
+
+# Switch to working directory
+WORKDIR /app
+
+# Copy over baked environment
+COPY --from=bake --chown=${USERNAME}:${USERNAME} /app/.venv /app/.venv
 
 # Switch to the non-root user
 USER ${USERNAME}
 
-# Explicitly populate home directory variable
-ENV HOME=/home/${USERNAME}
-
-# Make working directory
-WORKDIR ${HOME}/app
-
-# Copy over baked environment
-COPY --from=bake ${HOME}/app/.venv ${HOME}/app/.venv
-
 # Set executables in PATH
-ENV PATH="${HOME}/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Expose the service port
 EXPOSE $APP_PORT
 
 # Auto start the fastapi service on start-up
-ENTRYPOINT ["/bin/sh", "-c", "exec uvicorn {{ package_name }}.main:app --host \"$APP_HOST\" --port \"$APP_PORT\""]
+CMD ["sh", "-c", "exec uvicorn {{ package_name }}.main:app --host \"$APP_HOST\" --port \"$APP_PORT\""]
