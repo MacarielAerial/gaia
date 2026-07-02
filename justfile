@@ -20,13 +20,13 @@ render-ci:
   copier copy . rendered --trust --vcs-ref HEAD --defaults
 
 render-install:
-  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just install'
+  cd rendered && UV_PROJECT_ENVIRONMENT=".venv" just install
 
 render-lint:
-  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just lint'
+  cd rendered && CHECK_ONLY=true UV_PROJECT_ENVIRONMENT=".venv" just lint
 
 render-test:
-  UV_PROJECT_ENVIRONMENT="$PWD/rendered/.venv" bash -lc 'cd rendered && just test'
+  cd rendered && UV_PROJECT_ENVIRONMENT=".venv" just test
 
 validate:
   just render-ci

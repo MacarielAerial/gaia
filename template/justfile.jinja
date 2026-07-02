@@ -10,8 +10,13 @@ install:
 
 # Lint pipeline
 lint:
-  uv run ruff check . --fix
-  uv run ruff format .
+  if [ "${CHECK_ONLY:-}" = "true" ] || [ "${CI:-}" = "true" ]; then \
+    uv run ruff check . --diff; \
+    uv run ruff format . --check --diff; \
+  else \
+    uv run ruff check . --fix; \
+    uv run ruff format .; \
+  fi
   uv run mypy .
   uv run yamllint .
 
