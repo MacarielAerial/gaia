@@ -21,4 +21,4 @@ test:
 
 # Run the app locally
 run:
-  uv run uvicorn {{ package_name }}.main:app --host ${APP_HOST:-0.0.0.0} --port ${APP_PORT:-8000} --reload
+  uv run uvicorn {{ package_name }}.main:app --host ${APP_HOST:-0.0.0.0} --port ${APP_PORT:-8000} --reload --reload-exclude "*.ipynb"

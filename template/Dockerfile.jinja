@@ -41,6 +41,23 @@ RUN apt-get update \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy system dependency installation shell scripts over
+COPY scripts/ /tmp/scripts/
+
+# Make them executable
+RUN chmod +x /tmp/scripts/*.sh
+
+# Make sure Cargo is reachable by the unprivileged user
+ENV CARGO_HOME=/usr/local/cargo \
+    RUSTUP_HOME=/usr/local/rustup \
+    PATH=/usr/local/cargo/bin:$PATH
+
+# Install system dependencies not available in the package manager
+RUN /tmp/scripts/install-cargo.sh
+
+# Install just-lsp with cargo
+RUN cargo install just-lsp
+
 # Add the non-root user
 RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
     && useradd \
