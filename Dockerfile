@@ -18,11 +18,15 @@ ARG USER_GID
 # Set environemntal variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    UV_SYSTEM_PYTHON=1
+    UV_SYSTEM_PYTHON=1 \
+    RUSTUP_HOME=/opt/rustup \
+    CARGO_HOME=/opt/cargo
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    build-essential \
+    pkg-config \
     ca-certificates \
     git \
     git-lfs \
@@ -30,21 +34,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Cargo
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --default-toolchain stable --profile minimal
+
+# Global just-lsp install
+RUN /opt/cargo/bin/cargo install just-lsp --locked --root /usr/local
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:0.11.26 /uv /uvx /usr/local/bin/
+
 # Add the non-root user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME
 
 # Switch to the non-root user to install applications on the user level
 USER ${USERNAME}
-
-# Explicitly populate home directory variable
-ENV HOME=/home/${USERNAME}
-
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Make sure uv is reachable by the user shell
-ENV PATH="${HOME}/.local/bin:${PATH}"
 
 # Check uv is installed
 RUN uv --version

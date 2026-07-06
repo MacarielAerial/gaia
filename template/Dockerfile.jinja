@@ -30,7 +30,9 @@ ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
 
 # Avoid the uv hardlinking warning
-ENV UV_LINK_MODE=copy
+ENV UV_LINK_MODE=copy \
+    RUSTUP_HOME=/opt/rustup \
+    CARGO_HOME=/opt/cargo
 
 # Install system dependencies
 RUN apt-get update \
@@ -46,22 +48,12 @@ RUN apt-get update \
         sudo \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy system dependency installation shell scripts over
-COPY scripts/ /tmp/scripts/
+# Install Cargo
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --default-toolchain stable --profile minimal
 
-# Make them executable
-RUN chmod +x /tmp/scripts/*.sh
-
-# Make sure Cargo is reachable by the unprivileged user
-ENV CARGO_HOME=/usr/local/cargo \
-    RUSTUP_HOME=/usr/local/rustup \
-    PATH=/usr/local/cargo/bin:$PATH
-
-# Install system dependencies not available in the package manager
-RUN /tmp/scripts/install-cargo.sh
-
-# Install just-lsp with cargo
-RUN cargo install just-lsp
+# Global just-lsp install
+RUN /opt/cargo/bin/cargo install just-lsp --locked --root /usr/local
 
 # Add the non-root user
 RUN groupadd --gid "${USER_GID}" "${USERNAME}" \
